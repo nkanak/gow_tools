@@ -92,17 +92,28 @@ def terms_to_graph(terms, w):
                     from_to[try_edge] = 1
     
     # create empty graph
-    g = igraph.Graph(directed=True)
+    g = igraph.Graph(directed=False)
     
+    from_to_undirected = {}
+    for t1 in from_to.keys():
+        t2 = (t1[1], t1[0])
+        if t1 in from_to_undirected:
+            from_to_undirected[t1] += from_to[t1]
+        elif t2 in from_to_undirected:
+            from_to_undirected[t2] += from_to[t1]
+        else:
+            from_to_undirected[t1] = from_to[t1]
+    #print(from_to_undirected)
+
     # add vertices
     g.add_vertices(sorted(set(terms)))
     
     # add edges, direction is preserved since the graph is directed
-    g.add_edges(from_to.keys())
+    g.add_edges(from_to_undirected.keys())
     
     # set edge and vertex weights
-    g.es['weight'] = from_to.values() # based on co-occurence within sliding window
-    g.vs['weight'] = g.strength(weights=from_to.values()) # weighted degree
+    g.es['weight'] = list(from_to_undirected.values()) # based on co-occurence within sliding window
+    g.vs['weight'] = g.strength(weights=list(from_to_undirected.values())) # weighted degree
     
     return(g)
 
