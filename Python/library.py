@@ -104,7 +104,6 @@ def terms_to_graph(terms, w):
             from_to_undirected[t2] += from_to[t1]
         else:
             from_to_undirected[t1] = from_to[t1]
-    #print(from_to_undirected)
 
     # add vertices
     g.add_vertices(sorted(set(terms)))
